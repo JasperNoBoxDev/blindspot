@@ -1,0 +1,240 @@
+/* Blindspot Styles */
+
+/* Font Faces */
+@font-face {
+  font-family: 'Aeonik';
+  src: url('../assets/fonts/Aeonik-regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Arbeit';
+  src: url('../assets/fonts/Arbeit-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Arbeit';
+  src: url('../assets/fonts/Arbeit-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root {
+  --color-primary: #FE795D;
+  --color-primary-dark: #e56a50;
+  --color-secondary: #9B78F4;
+  --color-dark: #201E1D;
+  --color-text-light: #666666;
+  --color-white: #FFFFFF;
+  --color-light-grey: #F5F5F5;
+  --font-display: 'Aeonik', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Arbeit', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--color-white);
+  color: var(--color-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 40px;
+}
+
+/* Logo */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+.logo-mark {
+  height: 48px;
+  width: auto;
+}
+
+.logo span {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--color-dark);
+}
+
+/* Main */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+  padding: 0;
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 400;
+  color: #201E1D;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.hero h1 .highlight {
+  color: #FE795D;
+}
+
+.hero p {
+  font-size: 17px;
+  color: #555555;
+  margin-bottom: 32px;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(254, 121, 93, 0.3);
+}
+
+.github-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Steps */
+.steps {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.step {
+  flex: 1;
+  max-width: 280px;
+  padding: 32px;
+  background: #F0F0F0;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.step-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 20px;
+}
+
+.step h3 {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  color: #201E1D;
+  margin-bottom: 8px;
+}
+
+.step p {
+  font-size: 14px;
+  color: #666666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Footer */
+.footer {
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 24px;
+  font-size: 17px;
+  color: var(--color-text-light);
+}
+
+.footer a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+  .page {
+    padding: 24px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .steps {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step {
+    max-width: 100%;
+    padding: 24px;
+  }
+}
+
+@media (max-height: 750px) {
+  .main {
+    gap: 28px;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .step {
+    padding: 20px;
+  }
+
+  .step-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 16px;
+  }
+}

@@ -7,31 +7,34 @@ import { createTrigger, hideTrigger, showTrigger } from './trigger.js';
 import { captureScreenshot } from './capture.js';
 import { showOverlay, hideOverlay } from './overlay.js';
 
+const API_URL = 'https://blindspot-api.jasper-414.workers.dev';
+
 const config = {
-  repo: null,
-  workerUrl: null,
+  siteId: null,
+  color: '#FE795D',
+  text: 'Report issue',
 };
 
 function init(options = {}) {
-  if (!options.repo) {
-    console.error('[Blindspot] Missing required option: repo');
-    return;
-  }
-  if (!options.workerUrl) {
-    console.error('[Blindspot] Missing required option: workerUrl');
+  if (!options.siteId) {
+    console.error('[Blindspot] Missing required option: siteId');
     return;
   }
 
-  config.repo = options.repo;
-  config.workerUrl = options.workerUrl;
+  config.siteId = options.siteId;
+  config.color = options.color || '#FE795D';
+  config.text = options.text || 'Report issue';
 
   // Inject styles
   injectStyles();
 
-  // Create trigger button
-  createTrigger(handleTrigger);
+  // Create trigger button with customization
+  createTrigger(handleTrigger, {
+    color: config.color,
+    text: config.text,
+  });
 
-  console.log('[Blindspot] Initialized', { repo: config.repo });
+  console.log('[Blindspot] Initialized', { siteId: config.siteId, color: config.color, text: config.text });
 }
 
 async function handleTrigger() {
@@ -64,18 +67,18 @@ async function handleSubmit(data) {
   }
 
   try {
-    const response = await fetch(`${config.workerUrl}/report`, {
+    const response = await fetch(`${API_URL}/report`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        siteId: config.siteId,
         title: data.title,
         description: data.description,
         reporter: data.reporter,
         screenshot: data.screenshot,
         metadata: data.metadata,
-        repo: config.repo,
       }),
     });
 

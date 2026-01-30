@@ -12,28 +12,53 @@ const CLIP_ICON = `
 let triggerButton = null;
 let onTriggerCallback = null;
 
-export function createTrigger(onTrigger) {
+export function createTrigger(onTrigger, options = {}) {
   if (triggerButton) return triggerButton;
 
   onTriggerCallback = onTrigger;
+
+  const color = options.color || '#FE795D';
+  const text = options.text || 'Report issue';
 
   triggerButton = document.createElement('button');
   triggerButton.className = 'blindspot-trigger';
   triggerButton.innerHTML = `
     ${CLIP_ICON}
-    <span class="blindspot-trigger-text">Report issue</span>
+    <span class="blindspot-trigger-text">${text}</span>
     <span class="blindspot-trigger-dots">
       <span></span>
       <span></span>
       <span></span>
     </span>
   `;
-  triggerButton.setAttribute('aria-label', 'Report a bug');
+  triggerButton.setAttribute('aria-label', text);
+
+  // Apply custom color
+  triggerButton.style.background = color;
+  triggerButton.dataset.color = color;
 
   triggerButton.addEventListener('click', handleClick);
 
   document.body.appendChild(triggerButton);
   return triggerButton;
+}
+
+function darkenColor(hex, percent) {
+  // Remove # if present
+  hex = hex.replace('#', '');
+
+  // Parse RGB
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+
+  // Darken
+  r = Math.max(0, Math.floor(r * (100 - percent) / 100));
+  g = Math.max(0, Math.floor(g * (100 - percent) / 100));
+  b = Math.max(0, Math.floor(b * (100 - percent) / 100));
+
+  // Convert back to hex
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
 function handleClick() {

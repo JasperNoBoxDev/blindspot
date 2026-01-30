@@ -5,30 +5,29 @@
 const CSS = `
 .blindspot-trigger {
   position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 20px;
+  bottom: 20px;
   z-index: 2147483647;
   background: #FE795D;
   color: white;
   border: none;
-  padding: 16px 10px 12px 10px;
-  border-radius: 8px 0 0 8px;
+  padding: 12px 20px;
+  border-radius: 50px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
-  box-shadow: -2px 2px 8px rgba(0,0,0,0.15);
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .blindspot-trigger:hover {
-  transform: translateY(-50%);
-  background: #e5684d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
 .blindspot-trigger svg {
@@ -38,23 +37,11 @@ const CSS = `
 }
 
 .blindspot-trigger-text {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .blindspot-trigger-dots {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  opacity: 0.7;
-}
-
-.blindspot-trigger-dots span {
-  width: 4px;
-  height: 4px;
-  background: white;
-  border-radius: 50%;
+  display: none;
 }
 
 /* Overlay */
