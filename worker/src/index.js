@@ -38,7 +38,7 @@ export default {
  */
 async function handleReport(body, env) {
   // Validate required fields
-  const { title, description, screenshot, metadata, repo, reporter } = body;
+  const { title, description, screenshot, metadata, repo, reporter, elements } = body;
 
   if (!title) {
     throw new Error('Missing required field: title');
@@ -70,6 +70,7 @@ async function handleReport(body, env) {
     description,
     reporter,
     metadata,
+    elements,
     screenshotUrl,
     token: env.GITHUB_TOKEN,
   });
@@ -124,7 +125,7 @@ async function uploadScreenshot(base64Data, owner, repo, token) {
 /**
  * Create GitHub issue with bug report details
  */
-async function createGitHubIssue({ owner, repo, title, description, reporter, metadata, screenshotUrl, token }) {
+async function createGitHubIssue({ owner, repo, title, description, reporter, metadata, elements, screenshotUrl, token }) {
   // Build issue body
   let body = '';
 
@@ -141,6 +142,38 @@ async function createGitHubIssue({ owner, repo, title, description, reporter, me
   // Add screenshot
   if (screenshotUrl) {
     body += `## Screenshot\n\n![Screenshot](${screenshotUrl})\n\n`;
+  }
+
+  // Add selected elements (for AI debugging)
+  if (elements && elements.length > 0) {
+    body += '## Selected Elements\n\n';
+    for (const el of elements) {
+      body += `### ${el.tagName}${el.id ? '#' + el.id : ''}\n\n`;
+
+      // Basic info
+      body += '| Property | Value |\n';
+      body += '|----------|-------|\n';
+      body += `| **Selector** | \`${el.selector}\` |\n`;
+      if (el.fullSelector) body += `| **Full Path** | \`${el.fullSelector}\` |\n`;
+      if (el.accessibleName) body += `| **Accessible Name** | ${el.accessibleName} |\n`;
+      if (el.context) body += `| **Context** | ${el.context} |\n`;
+      if (el.text) body += `| **Text** | ${el.text.substring(0, 100)} |\n`;
+      body += '\n';
+
+      // Data attributes (most useful for finding in code)
+      if (el.dataAttributes && Object.keys(el.dataAttributes).length > 0) {
+        body += '**Data Attributes:**\n```\n';
+        for (const [key, value] of Object.entries(el.dataAttributes)) {
+          body += `${key}="${value}"\n`;
+        }
+        body += '```\n\n';
+      }
+
+      // Bounding box
+      if (el.rect) {
+        body += `**Bounding Box:** ${Math.round(el.rect.width)}×${Math.round(el.rect.height)} at (${Math.round(el.rect.left)}, ${Math.round(el.rect.top)})\n\n`;
+      }
+    }
   }
 
   // Add metadata

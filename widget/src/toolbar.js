@@ -6,6 +6,7 @@ import { setTool, getTool, clearCanvas, undoLast } from './canvas.js';
 
 let toolbarElement = null;
 let activeButton = null;
+let onToolChangeCallback = null;
 
 // Tool icons (SVG)
 const ICONS = {
@@ -27,6 +28,12 @@ const ICONS = {
     <path d="M2 2l7.586 7.586"/>
     <circle cx="11" cy="11" r="2"/>
   </svg>`,
+  element: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 3a9 9 0 1 0 9 9"/>
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M21 3l-6 6"/>
+    <path d="M21 9V3h-6"/>
+  </svg>`,
   undo: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3 7v6h6"/>
     <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
@@ -45,7 +52,13 @@ const ICONS = {
 export function createToolbarHTML() {
   return `
     <div class="blindspot-tool-group">
-      <button class="blindspot-tool-btn active" data-tool="arrow" title="Arrow">
+      <button class="blindspot-tool-btn active" data-tool="element" title="Select Element">
+        ${ICONS.element}
+      </button>
+    </div>
+    <div class="blindspot-tool-divider"></div>
+    <div class="blindspot-tool-group">
+      <button class="blindspot-tool-btn" data-tool="arrow" title="Arrow">
         ${ICONS.arrow}
       </button>
       <button class="blindspot-tool-btn" data-tool="rectangle" title="Box">
@@ -73,17 +86,27 @@ export function createToolbarHTML() {
 /**
  * Initialize toolbar event listeners
  * @param {HTMLElement} container - The toolbar container element
+ * @param {Object} options - Options
+ * @param {Function} options.onToolChange - Callback when tool changes, receives tool name
  */
-export function initToolbar(container) {
+export function initToolbar(container, options = {}) {
   toolbarElement = container;
+  onToolChangeCallback = options.onToolChange || null;
 
   // Tool buttons
   const toolBtns = container.querySelectorAll('[data-tool]');
   toolBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const tool = btn.dataset.tool;
-      setTool(tool);
+      // Only set canvas tool for drawing tools, not element picker
+      if (tool !== 'element') {
+        setTool(tool);
+      }
       updateActiveButton(btn);
+      // Notify listener of tool change
+      if (onToolChangeCallback) {
+        onToolChangeCallback(tool);
+      }
     });
   });
 
@@ -100,8 +123,30 @@ export function initToolbar(container) {
     });
   });
 
-  // Set initial active button
-  activeButton = container.querySelector('[data-tool="arrow"]');
+  // Set initial active button to element picker
+  activeButton = container.querySelector('[data-tool="element"]');
+
+  // Trigger initial tool change to activate element picker
+  if (onToolChangeCallback) {
+    onToolChangeCallback('element');
+  }
+}
+
+/**
+ * Programmatically select a tool
+ * @param {string} tool - Tool name to select
+ */
+export function selectTool(tool) {
+  const btn = toolbarElement?.querySelector(`[data-tool="${tool}"]`);
+  if (btn) {
+    if (tool !== 'element') {
+      setTool(tool);
+    }
+    updateActiveButton(btn);
+    if (onToolChangeCallback) {
+      onToolChangeCallback(tool);
+    }
+  }
 }
 
 function updateActiveButton(btn) {
@@ -118,4 +163,5 @@ function updateActiveButton(btn) {
 export function destroyToolbar() {
   toolbarElement = null;
   activeButton = null;
+  onToolChangeCallback = null;
 }

@@ -42,9 +42,9 @@ async function handleTrigger() {
 
   try {
     hideTrigger();
-    const screenshot = await captureScreenshot();
+    const capture = await captureScreenshot();
     console.log('[Blindspot] Screenshot ready, opening overlay...');
-    showOverlay(screenshot, {
+    showOverlay(capture, {
       onClose: () => {
         showTrigger();
       },
@@ -79,6 +79,7 @@ async function handleSubmit(data) {
         reporter: data.reporter,
         screenshot: data.screenshot,
         metadata: data.metadata,
+        elements: data.elements,
       }),
     });
 
