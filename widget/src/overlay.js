@@ -354,15 +354,15 @@ function hidePickerInstruction() {
 }
 
 function handleElementSelected(elementInfo) {
-  // Check if element is already selected (by selector)
-  const exists = selectedElements.some(el => el.selector === elementInfo.selector);
+  // Check if element is already selected (by fullSelector which is unique)
+  const exists = selectedElements.some(el => el.fullSelector === elementInfo.fullSelector);
   if (!exists) {
     selectedElements.push(elementInfo);
     updateSelectedElements(selectedElements, handleRemoveElement);
     drawSelectedElementHighlights();
-    console.log('[Blindspot] Element added:', elementInfo.selector);
+    console.log('[Blindspot] Element added:', elementInfo.fullSelector);
   } else {
-    console.log('[Blindspot] Element already selected:', elementInfo.selector);
+    console.log('[Blindspot] Element already selected:', elementInfo.fullSelector);
   }
 }
 
