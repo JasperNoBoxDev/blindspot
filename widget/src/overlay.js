@@ -58,6 +58,7 @@ export function showOverlay(capture, options = {}) {
           <div class="blindspot-canvas-wrapper">
             <img class="blindspot-screenshot" src="${capture.dataUrl}" alt="Screenshot" />
             <canvas class="blindspot-drawing-canvas"></canvas>
+            <div class="blindspot-selected-highlights"></div>
             <div class="blindspot-element-highlight-overlay"></div>
           </div>
         </div>
@@ -355,6 +356,7 @@ function handleElementSelected(elementInfo) {
   if (!exists) {
     selectedElements.push(elementInfo);
     updateSelectedElements(selectedElements, handleRemoveElement);
+    drawSelectedElementHighlights();
     console.log('[Blindspot] Element added:', elementInfo.selector);
   } else {
     console.log('[Blindspot] Element already selected:', elementInfo.selector);
@@ -364,7 +366,50 @@ function handleElementSelected(elementInfo) {
 function handleRemoveElement(index) {
   selectedElements.splice(index, 1);
   updateSelectedElements(selectedElements, handleRemoveElement);
+  drawSelectedElementHighlights();
   console.log('[Blindspot] Element removed, remaining:', selectedElements.length);
+}
+
+/**
+ * Draw permanent highlight boxes for all selected elements
+ */
+function drawSelectedElementHighlights() {
+  const container = overlayElement?.querySelector('.blindspot-selected-highlights');
+  if (!container) return;
+
+  const img = overlayElement.querySelector('.blindspot-screenshot');
+  if (!img) return;
+
+  const imgRect = img.getBoundingClientRect();
+  const scaleX = imgRect.width / viewportData.width;
+  const scaleY = imgRect.height / viewportData.height;
+
+  let html = '';
+  for (const el of selectedElements) {
+    if (!el.rect) continue;
+
+    const displayLeft = el.rect.left * scaleX;
+    const displayTop = el.rect.top * scaleY;
+    const displayWidth = el.rect.width * scaleX;
+    const displayHeight = el.rect.height * scaleY;
+
+    html += `
+      <div style="
+        position: absolute;
+        left: ${displayLeft}px;
+        top: ${displayTop}px;
+        width: ${displayWidth}px;
+        height: ${displayHeight}px;
+        border: 3px solid #9B78F4;
+        background: rgba(155, 120, 244, 0.15);
+        border-radius: 4px;
+        pointer-events: none;
+        box-sizing: border-box;
+      "></div>
+    `;
+  }
+
+  container.innerHTML = html;
 }
 
 function handleFormSubmit(formData) {

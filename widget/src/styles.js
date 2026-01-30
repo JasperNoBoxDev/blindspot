@@ -5,29 +5,29 @@
 const CSS = `
 .blindspot-trigger {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 2147483647;
   background: #FE795D;
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 50px;
+  padding: 16px 10px 12px 10px;
+  border-radius: 8px 0 0 8px;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 12px;
+  box-shadow: -2px 2px 8px rgba(0,0,0,0.15);
+  transition: background 0.2s ease;
 }
 
 .blindspot-trigger:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  background: #e5684d;
 }
 
 .blindspot-trigger svg {
@@ -37,11 +37,23 @@ const CSS = `
 }
 
 .blindspot-trigger-text {
-  letter-spacing: 0.3px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.5px;
 }
 
 .blindspot-trigger-dots {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  opacity: 0.7;
+}
+
+.blindspot-trigger-dots span {
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
 }
 
 /* Overlay */
@@ -184,6 +196,16 @@ const CSS = `
   width: 100%;
   height: 100%;
   cursor: crosshair;
+}
+
+.blindspot-selected-highlights {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
 }
 
 /* Sidebar */
@@ -362,6 +384,61 @@ const CSS = `
 
 .blindspot-close-overlay-btn:hover {
   background: #f5f5f5;
+}
+
+/* Selected elements */
+.blindspot-elements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.blindspot-element-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.blindspot-element-tag {
+  background: #9B78F4;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.blindspot-element-detail {
+  flex: 1;
+  color: #201E1D;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.blindspot-element-remove {
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+
+.blindspot-element-remove:hover {
+  background: rgba(0,0,0,0.1);
+  color: #666;
 }
 `;
 

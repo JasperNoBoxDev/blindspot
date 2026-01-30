@@ -55,6 +55,11 @@ export function createSidebarHTML(metadata, onSubmit) {
           />
         </div>
 
+        <div class="blindspot-form-group blindspot-elements-section" style="display: none;">
+          <label class="blindspot-label">Selected Elements</label>
+          <div class="blindspot-elements-list"></div>
+        </div>
+
         <div class="blindspot-form-group">
           <label class="blindspot-label">Captured Info</label>
           <div class="blindspot-metadata">
@@ -116,4 +121,67 @@ function handleSubmit(e) {
 function truncate(str, length) {
   if (str.length <= length) return str;
   return str.substring(0, length) + '...';
+}
+
+/**
+ * Update the selected elements display in the sidebar
+ * @param {Array} elements - Array of element info objects
+ * @param {Function} onRemove - Callback when element is removed, receives index
+ */
+export function updateSelectedElements(elements, onRemove) {
+  const section = document.querySelector('.blindspot-elements-section');
+  const list = document.querySelector('.blindspot-elements-list');
+
+  if (!section || !list) return;
+
+  if (elements.length === 0) {
+    section.style.display = 'none';
+    list.innerHTML = '';
+    return;
+  }
+
+  section.style.display = 'block';
+  list.innerHTML = elements.map((el, index) => `
+    <div class="blindspot-element-chip" data-index="${index}">
+      <span class="blindspot-element-tag">${el.tagName}</span>
+      <span class="blindspot-element-detail">${getElementLabel(el)}</span>
+      <button type="button" class="blindspot-element-remove" data-index="${index}" aria-label="Remove">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+
+  // Add remove handlers
+  list.querySelectorAll('.blindspot-element-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const index = parseInt(btn.dataset.index, 10);
+      if (onRemove) onRemove(index);
+    });
+  });
+}
+
+function getElementLabel(el) {
+  let label = '';
+
+  // Primary identifier
+  if (el.id) {
+    label = `#${el.id}`;
+  } else if (el.classes && el.classes.length > 0) {
+    label = `.${el.classes[0]}`;
+  }
+
+  // Add text context
+  if (el.text && el.text.length > 0) {
+    const textPreview = truncate(el.text, 25);
+    label += label ? ` "${textPreview}"` : `"${textPreview}"`;
+  } else if (el.innerText && el.innerText.length > 0) {
+    const textPreview = truncate(el.innerText, 25);
+    label += label ? ` "${textPreview}"` : `"${textPreview}"`;
+  }
+
+  return label || el.selector || el.tagName;
 }

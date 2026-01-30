@@ -187,11 +187,11 @@
     .form-group select {
       width: 100%;
       padding: 12px 14px;
-      border: 2px solid #e5e5e5;
+      border: 2px solid #FED4CA;
       border-radius: 8px;
       font-family: inherit;
       font-size: 15px;
-      background: #fafafa;
+      background: #FFF5F3;
       transition: border-color 0.2s, background 0.2s;
     }
 
@@ -337,7 +337,7 @@
         <div id="sites-grid" class="sites-grid"></div>
       </main>
 
-      <footer class="footer" style="margin-top: auto; padding-top: 40px;">
+      <footer class="footer" style="margin-top: auto; padding: 40px 0 20px 0;">
         Built by <a href="https://noboxdev.com">No Box Dev</a>
       </footer>
     </div>
@@ -451,7 +451,7 @@
 
         const user = await response.json();
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('dashboard').style.display = 'flex';
         document.getElementById('username').textContent = user.username;
 
         loadSites();
