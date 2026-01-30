@@ -26,10 +26,8 @@ export function initCanvas(canvasEl) {
   canvas = canvasEl;
   ctx = canvas.getContext('2d');
 
-  // Set canvas size to match its display size
-  const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width;
-  canvas.height = rect.height;
+  // Canvas size is already set to match the image's natural size in overlay.js
+  // Don't resize here - keep the natural dimensions for proper scaling
 
   // Set drawing styles
   ctx.strokeStyle = STROKE_COLOR;
