@@ -5,7 +5,7 @@
 import { createSidebarHTML, initSidebarEvents, updateSelectedElements } from './sidebar.js';
 import { collectMetadata } from './metadata.js';
 import { createToolbarHTML, initToolbar, destroyToolbar } from './toolbar.js';
-import { initCanvas, destroyCanvas, hasAnnotations, getCanvasDataURL } from './canvas.js';
+import { initCanvas, destroyCanvas, hasAnnotations, getCanvasDataURL, disableCanvas, enableCanvas } from './canvas.js';
 
 let overlayElement = null;
 let screenshotData = null;
@@ -161,6 +161,8 @@ function handleToolChange(tool) {
 
 function activateScreenshotElementPicker() {
   elementPickerActive = true;
+  disableCanvas(); // Prevent drawing while selecting elements
+
   const wrapper = overlayElement.querySelector('.blindspot-canvas-wrapper');
   const img = overlayElement.querySelector('.blindspot-screenshot');
   highlightOverlay = overlayElement.querySelector('.blindspot-element-highlight-overlay');
@@ -201,6 +203,7 @@ function activateScreenshotElementPicker() {
 function deactivateScreenshotElementPicker() {
   if (!elementPickerActive) return;
   elementPickerActive = false;
+  enableCanvas(); // Re-enable drawing when leaving element picker
 
   const wrapper = overlayElement?.querySelector('.blindspot-canvas-wrapper');
   if (wrapper) {

@@ -6,6 +6,7 @@ let canvas = null;
 let ctx = null;
 let isDrawing = false;
 let currentTool = 'arrow'; // arrow, rectangle, text, draw
+let canvasDisabled = false; // When element picker is active
 let startX = 0;
 let startY = 0;
 let lastX = 0;
@@ -56,6 +57,22 @@ export function initCanvas(canvasEl) {
 export function setTool(tool) {
   currentTool = tool;
   console.log('[Blindspot] Tool set to:', tool);
+}
+
+/**
+ * Disable canvas drawing (when element picker is active)
+ */
+export function disableCanvas() {
+  canvasDisabled = true;
+  if (canvas) canvas.style.pointerEvents = 'none';
+}
+
+/**
+ * Enable canvas drawing
+ */
+export function enableCanvas() {
+  canvasDisabled = false;
+  if (canvas) canvas.style.pointerEvents = 'auto';
 }
 
 /**
