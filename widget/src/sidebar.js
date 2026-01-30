@@ -42,12 +42,16 @@ export function createSidebarHTML(metadata, onSubmit) {
         </div>
 
         <div class="blindspot-form-group">
-          <label class="blindspot-label" for="blindspot-reporter">Submitted by</label>
+          <label class="blindspot-label" for="blindspot-reporter">Submitted by *</label>
           <input
             type="text"
             id="blindspot-reporter"
             class="blindspot-input"
-            placeholder="Your name or email (optional)"
+            placeholder=""
+            autocomplete="off"
+            data-1p-ignore
+            data-lpignore="true"
+            required
           />
         </div>
 

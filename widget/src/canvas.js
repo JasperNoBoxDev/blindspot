@@ -15,8 +15,8 @@ let currentPath = null;
 let textInput = null;
 
 const STROKE_COLOR = '#9B78F4'; // Purple from brand
-const STROKE_WIDTH = 3;
-const FONT_SIZE = 16;
+const STROKE_WIDTH = 8;
+const FONT_SIZE = 24;
 
 /**
  * Initialize the drawing canvas
@@ -329,7 +329,7 @@ function drawPath(points) {
 }
 
 function drawArrow(fromX, fromY, toX, toY) {
-  const headLength = 15;
+  const headLength = 25;
   const angle = Math.atan2(toY - fromY, toX - fromX);
 
   // Draw line
