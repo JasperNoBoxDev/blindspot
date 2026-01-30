@@ -63,23 +63,23 @@ Collected automatically, no user input needed:
 - Console errors (recent)
 - Timestamp
 
-## MVP Scope
+## Current Status: MVP Complete ✓
 
-**Focus: Bug reports only**
-
-- [ ] Widget JS library
-  - [ ] Floating button UI
-  - [ ] Screenshot capture
-  - [ ] Basic annotation (draw/highlight)
-  - [ ] Bug report form
-  - [ ] Submit to worker
-- [ ] Cloudflare Worker
-  - [ ] Receive reports
-  - [ ] Upload image to GitHub
-  - [ ] Create issue
-- [ ] Configuration
-  - [ ] Site owner specifies: GitHub repo, worker URL
-  - [ ] Widget customization (position, colors)
+**Implemented:**
+- [x] Widget JS library (25.5kb minified)
+  - [x] Floating side button with paperclip icon
+  - [x] Screenshot capture via html2canvas
+  - [x] Annotation tools: Arrow, Box, Text, Freeform
+  - [x] Bug report form (title, description, submitted by)
+  - [x] Submit to worker
+- [x] Cloudflare Worker
+  - [x] POST /report endpoint
+  - [x] Upload screenshot to GitHub repo
+  - [x] Create issue with labels
+  - [x] CORS support
+- [x] Deployment
+  - [x] Worker deployed to: `https://blindspot-worker.jasper-414.workers.dev`
+  - [x] Widget hosted via jsDelivr CDN
 
 **Not in MVP:**
 - Feature requests / general feedback
@@ -89,20 +89,27 @@ Collected automatically, no user input needed:
 
 ## Tech Stack
 
-- **Widget:** Vanilla JS (no framework, keep bundle small)
-- **Worker:** Cloudflare Workers (free tier, globally distributed)
+- **Widget:** Vanilla JS with esbuild bundling (~25kb)
+- **Worker:** Cloudflare Workers
 - **Storage:** GitHub Issues (no database needed)
-- **Screenshot:** html2canvas or native browser APIs
+- **Screenshot:** html2canvas (loaded dynamically from CDN)
+- **Hosting:** jsDelivr CDN (via GitHub)
+
+## Live URLs
+
+- **GitHub Repo:** https://github.com/JasperNoBoxDev/blindspot
+- **Worker:** https://blindspot-worker.jasper-414.workers.dev
+- **Widget CDN:** https://cdn.jsdelivr.net/gh/JasperNoBoxDev/blindspot@main/widget/dist/blindspot.min.js
 
 ## Developer Experience
 
 Site owner setup:
 ```html
-<script src="https://cdn.blindspot.dev/widget.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/JasperNoBoxDev/blindspot@main/widget/dist/blindspot.min.js"></script>
 <script>
   Blindspot.init({
-    repo: 'owner/repo',
-    workerUrl: 'https://blindspot-worker.username.workers.dev'
+    repo: 'YourOrg/your-repo',
+    workerUrl: 'https://blindspot-worker.jasper-414.workers.dev'
   });
 </script>
 ```
@@ -118,13 +125,47 @@ Developer triage (in Claude Code):
 
 ```
 blindspot/
-├── widget/           # JS widget for websites
+├── widget/
 │   ├── src/
-│   └── dist/
-├── worker/           # Cloudflare Worker
-│   └── src/
-└── docs/             # Setup guides
+│   │   ├── index.js      # Main entry, Blindspot.init()
+│   │   ├── trigger.js    # Side tab button
+│   │   ├── capture.js    # Screenshot via html2canvas
+│   │   ├── overlay.js    # Fullscreen overlay container
+│   │   ├── toolbar.js    # Annotation tool buttons
+│   │   ├── canvas.js     # Drawing canvas (arrow, box, text, freeform)
+│   │   ├── sidebar.js    # Form panel
+│   │   ├── metadata.js   # Auto-collect browser/OS/errors
+│   │   └── styles.js     # All CSS (injected)
+│   ├── dist/
+│   │   └── blindspot.min.js
+│   ├── demo.html
+│   └── package.json
+├── worker/
+│   ├── src/
+│   │   └── index.js      # Cloudflare Worker
+│   ├── wrangler.toml
+│   └── package.json
+└── CLAUDE.md
 ```
+
+## Key Implementation Details
+
+### Widget
+- **Trigger button:** Orange side tab, right edge, vertical "Report issue" text
+- **Screenshot:** Captures `document.documentElement` with computed background color
+- **Canvas:** Sized to image's natural dimensions for proper annotation scaling
+- **Annotations:** Purple (#9B78F4), stroke width 8, font size 24
+- **Form fields:** Title (required), Description, Submitted by (required)
+
+### Worker
+- **Endpoint:** POST /report
+- **Screenshot storage:** Uploaded to `.blindspot/screenshots/` in target repo
+- **Issue format:** Description, reporter, screenshot image, environment table, console errors
+- **Labels:** `blindspot`, `bug`
+
+### Secrets
+- Worker requires `GITHUB_TOKEN` secret (classic token with `repo` scope)
+- Set via: `wrangler secret put GITHUB_TOKEN`
 
 ## Branding
 
