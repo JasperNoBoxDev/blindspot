@@ -1,0 +1,15 @@
+{
+  "name": "blindspot-widget",
+  "version": "0.1.0",
+  "description": "Bug reporting widget for websites",
+  "main": "dist/blindspot.min.js",
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --minify --outfile=dist/blindspot.min.js --format=iife --global-name=Blindspot",
+    "watch": "esbuild src/index.js --bundle --outfile=dist/blindspot.js --format=iife --global-name=Blindspot --watch",
+    "serve": "npx serve . -p 3000"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0"
+  },
+  "license": "MIT"
+}

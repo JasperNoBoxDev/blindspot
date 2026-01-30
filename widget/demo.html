@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blindspot Demo</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: #f5f5f5;
+      color: #201E1D;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #201E1D;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .card h2 {
+      margin-top: 0;
+      color: #FE795D;
+    }
+    .button {
+      background: #FE795D;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .button:hover {
+      background: #e5684d;
+    }
+    code {
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐛 Blindspot Demo</h1>
+
+    <div class="card">
+      <h2>Sample Content</h2>
+      <p>This is a demo page to test the Blindspot bug reporting widget.</p>
+      <p>Click the bug button on the right side of the screen to report an issue.</p>
+    </div>
+
+    <div class="card">
+      <h2>Test Elements</h2>
+      <p>Here are some elements you might want to annotate:</p>
+      <button class="button">Sample Button</button>
+      <p style="margin-top: 16px;">
+        <code>Some code snippet here</code>
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Status</h2>
+      <p id="status">Checking Blindspot initialization...</p>
+    </div>
+  </div>
+
+  <!-- Load Blindspot widget -->
+  <script src="dist/blindspot.js"></script>
+  <script>
+    // Initialize Blindspot
+    Blindspot.init({
+      repo: 'JasperNoBoxDev/blindspot',
+      workerUrl: 'https://blindspot-worker.jasper-414.workers.dev'
+    });
+
+    // Update status
+    document.getElementById('status').textContent = 'Blindspot initialized! Check console for details.';
+  </script>
+</body>
+</html>
