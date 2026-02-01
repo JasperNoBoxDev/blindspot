@@ -63,49 +63,60 @@ Collected automatically, no user input needed:
 - Console errors (recent)
 - Timestamp
 
-## Current Status: MVP Complete ✓
+## Current Status: SaaS Platform ✓
 
 **Implemented:**
-- [x] Widget JS library (25.5kb minified)
-  - [x] Floating side button with paperclip icon
+- [x] Widget JS library (~37kb minified)
+  - [x] Floating side button with "Report issue" text
   - [x] Screenshot capture via html2canvas
-  - [x] Annotation tools: Arrow, Box, Text, Freeform
+  - [x] Annotation tools: Element Picker, Arrow, Box, Text, Freeform
+  - [x] Element picker captures rich data (selector, accessible name, context)
   - [x] Bug report form (title, description, submitted by)
   - [x] Submit to worker
 - [x] Cloudflare Worker
   - [x] POST /report endpoint
   - [x] Upload screenshot to GitHub repo
-  - [x] Create issue with labels
+  - [x] Create issue with labels and selected elements
   - [x] CORS support
+- [x] SaaS API (`/api`)
+  - [x] User authentication (GitHub OAuth)
+  - [x] Site management (create, list sites)
+  - [x] Per-site configuration
+- [x] Website (`/website`)
+  - [x] Landing page
+  - [x] Dashboard for managing sites
 - [x] Deployment
-  - [x] Worker deployed to: `https://blindspot-worker.jasper-414.workers.dev`
-  - [x] Widget hosted via jsDelivr CDN
+  - [x] Worker: `https://blindspot-worker.jasper-414.workers.dev`
+  - [x] API: Cloudflare Workers
+  - [x] Widget: Cloudflare R2 bucket
+  - [x] Website: Cloudflare Pages (`getblindspot.pages.dev`)
 
-**Not in MVP:**
+**Not yet implemented:**
 - Feature requests / general feedback
 - Session replay
-- Multiple project management integrations
-- User accounts / dashboard
+- Multiple project management integrations (Jira, Linear, etc.)
 
 ## Tech Stack
 
-- **Widget:** Vanilla JS with esbuild bundling (~25kb)
+- **Widget:** Vanilla JS with esbuild bundling (~37kb)
 - **Worker:** Cloudflare Workers
-- **Storage:** GitHub Issues (no database needed)
+- **API:** Cloudflare Workers + D1 database
+- **Storage:** GitHub Issues for bug reports
 - **Screenshot:** html2canvas (loaded dynamically from CDN)
-- **Hosting:** jsDelivr CDN (via GitHub)
+- **Hosting:** Cloudflare R2 (widget), Cloudflare Pages (website)
 
 ## Live URLs
 
 - **GitHub Repo:** https://github.com/JasperNoBoxDev/blindspot
+- **Website:** https://getblindspot.pages.dev
 - **Worker:** https://blindspot-worker.jasper-414.workers.dev
-- **Widget CDN:** https://cdn.jsdelivr.net/gh/JasperNoBoxDev/blindspot@main/widget/dist/blindspot.min.js
+- **Widget R2:** https://pub-566620c016dc4a40b7335d3f5e387a0e.r2.dev/blindspot.min.js
 
 ## Developer Experience
 
 Site owner setup:
 ```html
-<script src="https://cdn.jsdelivr.net/gh/JasperNoBoxDev/blindspot@main/widget/dist/blindspot.min.js"></script>
+<script src="https://pub-566620c016dc4a40b7335d3f5e387a0e.r2.dev/blindspot.min.js"></script>
 <script>
   Blindspot.init({
     repo: 'YourOrg/your-repo',
@@ -127,24 +138,34 @@ Developer triage (in Claude Code):
 blindspot/
 ├── widget/
 │   ├── src/
-│   │   ├── index.js      # Main entry, Blindspot.init()
-│   │   ├── trigger.js    # Side tab button
-│   │   ├── capture.js    # Screenshot via html2canvas
-│   │   ├── overlay.js    # Fullscreen overlay container
-│   │   ├── toolbar.js    # Annotation tool buttons
-│   │   ├── canvas.js     # Drawing canvas (arrow, box, text, freeform)
-│   │   ├── sidebar.js    # Form panel
-│   │   ├── metadata.js   # Auto-collect browser/OS/errors
-│   │   └── styles.js     # All CSS (injected)
+│   │   ├── index.js        # Main entry, Blindspot.init()
+│   │   ├── trigger.js      # Side tab button
+│   │   ├── capture.js      # Screenshot via html2canvas + element map
+│   │   ├── overlay.js      # Fullscreen overlay container
+│   │   ├── toolbar.js      # Annotation tool buttons
+│   │   ├── canvas.js       # Drawing canvas (arrow, box, text, freeform)
+│   │   ├── sidebar.js      # Form panel
+│   │   ├── metadata.js     # Auto-collect browser/OS/errors
+│   │   ├── elements.js     # Element utilities
+│   │   ├── elementPicker.js # Element picker tool
+│   │   └── styles.js       # All CSS (injected)
 │   ├── dist/
 │   │   └── blindspot.min.js
 │   ├── demo.html
 │   └── package.json
 ├── worker/
 │   ├── src/
-│   │   └── index.js      # Cloudflare Worker
+│   │   └── index.js        # Bug report worker (GitHub issues)
 │   ├── wrangler.toml
 │   └── package.json
+├── api/
+│   ├── src/
+│   │   └── index.js        # SaaS API (auth, sites)
+│   ├── wrangler.toml
+│   └── package.json
+├── website/
+│   ├── index.html          # Landing page
+│   └── dashboard.html      # User dashboard
 └── CLAUDE.md
 ```
 
@@ -153,9 +174,24 @@ blindspot/
 ### Widget
 - **Trigger button:** Orange side tab, right edge, vertical "Report issue" text
 - **Screenshot:** Captures `document.documentElement` with computed background color
+- **Element picker:** Default tool, captures rich element data for AI debugging:
+  - CSS selector path (unique)
+  - Accessible name (aria-label, title, label)
+  - Data attributes
+  - Nearby landmarks/context
 - **Canvas:** Sized to image's natural dimensions for proper annotation scaling
 - **Annotations:** Purple (#9B78F4), stroke width 8, font size 24
 - **Form fields:** Title (required), Description, Submitted by (required)
+
+### Deployment
+To update the widget for all users:
+```bash
+cd widget && npm run build
+npx wrangler r2 object put blindspot-assets/blindspot.min.js \
+  --file dist/blindspot.min.js --remote \
+  --content-type "application/javascript" \
+  --cache-control "public, max-age=300"
+```
 
 ### Worker
 - **Endpoint:** POST /report
