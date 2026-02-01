@@ -64,6 +64,21 @@ export async function captureScreenshot() {
       height: document.documentElement.clientHeight,
       x: window.scrollX,
       y: window.scrollY,
+      logging: false,
+      imageTimeout: 5000,
+      onclone: (clonedDoc) => {
+        // Wait for images to load in cloned document
+        const images = clonedDoc.querySelectorAll('img');
+        return Promise.all(Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+            // Timeout fallback
+            setTimeout(resolve, 2000);
+          });
+        }));
+      },
     });
 
     const dataUrl = canvas.toDataURL('image/png');
