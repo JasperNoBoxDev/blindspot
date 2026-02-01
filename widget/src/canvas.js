@@ -36,6 +36,11 @@ export function initCanvas(canvasEl) {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
+  // Apply disabled state if element picker was activated before canvas init
+  if (canvasDisabled) {
+    canvas.style.pointerEvents = 'none';
+  }
+
   // Add event listeners
   canvas.addEventListener('mousedown', handleMouseDown);
   canvas.addEventListener('mousemove', handleMouseMove);
@@ -47,7 +52,7 @@ export function initCanvas(canvasEl) {
   canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
   canvas.addEventListener('touchend', handleTouchEnd);
 
-  console.log('[Blindspot] Canvas initialized', { width: canvas.width, height: canvas.height });
+  console.log('[Blindspot] Canvas initialized', { width: canvas.width, height: canvas.height, disabled: canvasDisabled });
 }
 
 /**
@@ -119,6 +124,7 @@ export function hasAnnotations() {
 
 // Mouse event handlers
 function handleMouseDown(e) {
+  if (canvasDisabled) return; // Don't draw when element picker is active
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
